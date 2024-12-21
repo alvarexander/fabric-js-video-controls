@@ -1,0 +1,26 @@
+<div style="position: relative;">
+  <!-- Fabric.js Canvas -->
+  <canvas #canvas></canvas>
+
+  <!-- Video Controls -->
+  <div
+    id="controls"
+    class="controls"
+  >
+    <!-- Play/Pause Button -->
+    <button (click)="playPauseVideo()">
+      {{ isPlaying ? 'Pause' : 'Play' }}
+    </button>
+
+    <!-- Scrubber -->
+    <input
+      type="range"
+      min="0"
+      [max]="videoDuration"
+      step="0.1"
+      [(ngModel)]="currentTime"
+      (input)="onScrubberChange($event)"
+    />
+    <span>{{ currentTime | number:'1.1-1' }} / {{ videoDuration | number:'1.1-1' }}</span>
+  </div>
+</div>
