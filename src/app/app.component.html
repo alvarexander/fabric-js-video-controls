@@ -1,26 +1,39 @@
 <div style="position: relative;">
-  <!-- Fabric.js Canvas -->
-  <canvas #canvas></canvas>
+    <!-- Fabric.js Canvas -->
+    <canvas #canvas></canvas>
 
-  <!-- Video Controls -->
-  <div
-    id="controls"
-    class="controls"
-  >
-    <!-- Play/Pause Button -->
-    <button (click)="playPauseVideo()">
-      {{ isPlaying ? 'Pause' : 'Play' }}
-    </button>
+    <!-- Video Controls -->
+    <div
+        #controls
+        id="controls"
+        class="controls"
+    >
+        <!-- Play/Pause Button -->
+        <button (click)="playPauseVideo()">
+            <span class="material-symbols-sharp">
+                  {{ isPlaying ? 'pause' : 'play_arrow' }}
+            </span>
+        </button>
+        <!-- Current Time -->
+        <span class="number-label">{{ currentTimeLabel }}</span>
 
-    <!-- Scrubber -->
-    <input
-      type="range"
-      min="0"
-      [max]="videoDuration"
-      step="0.1"
-      [(ngModel)]="currentTime"
-      (input)="onScrubberChange($event)"
-    />
-    <span>{{ currentTime | number:'1.1-1' }} / {{ videoDuration | number:'1.1-1' }}</span>
-  </div>
+        <!-- Scrubber -->
+        <input
+                #scrubber
+                type="range"
+                min="0"
+                [max]="videoDuration"
+                step="0.01"
+                [(ngModel)]="currentTime"
+                (input)="onScrubberChange()"
+        />
+        <!-- Total Time -->
+        <span class="number-label" style="margin-right: 10px;"> {{ videoDurationLabel }}</span>
+
+        <!-- Looping Button -->
+        <button #loopButton (click)="changeLoopSetting()">
+            <span class="material-symbols-sharp loop-option"> {{ loop ? 'repeat_on' : 'repeat'}} </span>
+        </button>
+
+    </div>
 </div>
