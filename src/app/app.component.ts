@@ -15,7 +15,14 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     @ViewChild('scrubber', {static: true}) scrubberRef?: ElementRef<HTMLInputElement>;
     @ViewChild('loopButton', {static: true}) loopBtnRef?: ElementRef<HTMLButtonElement>;
 
-    @Input()videoElement: HTMLVideoElement = {} as HTMLVideoElement;
+    /**
+     * Note: This property is designed as an input to allow external components to manage the control display.
+     * Ideally, only one control should be visible at a time for the currently selected or active video in the canvas.
+     * The parent component can track and update the video element and its positioning (e.g., top, left, width).
+     * In this example, these dimensions are calculated locally within this component, but they can be passed as an input
+     * from an external component if desired (e.g., @Input() controlConfig: { top: number, left: number, width: number }).
+     */
+    @Input() videoElement: HTMLVideoElement = {} as HTMLVideoElement;
     canvas: fabric.Canvas = {} as fabric.Canvas;
     videoObject: fabric.Image = {} as fabric.Image;
 
@@ -27,7 +34,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
     videoDurationLabel: string = '00:00:00';
     loop: boolean = false;
 
-    constructor() { }
+    constructor() {
+    }
 
 
     ngAfterViewInit(): void {
@@ -135,7 +143,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         } else {
             this.videoElement.pause();
         }
-       this.renderVideoFrame();
+        this.renderVideoFrame();
         this.isPlaying = !this.isPlaying;
     }
 
@@ -155,6 +163,8 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         const scrubber = this.scrubberRef?.nativeElement;
         if (scrubber) {
             const value = parseFloat(scrubber.value) / parseFloat(scrubber.max) * 100;
+            // Update the gradient dynamically to keep up with current place in video
+            // Note: this part optional and can be done in other ways such as css, etc.
             scrubber.style.background = 'linear-gradient(to right, rgb(180, 180, 180) 0%, rgb(180, 180, 180) ' + value + '%, rgb(103,112,106)' + value + '%, rgb(103,112,106) 100%)';
             this.videoElement.currentTime = parseFloat(scrubber.value);
             this.currentTime = this.videoElement?.currentTime;
@@ -169,6 +179,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
      * Does not currently account for angle changes
      */
     private _updateControlsPosition(): void {
+        // TODO: Come up with calculations that account for angle.
         const videoFabricObj = this.videoObject;
         const controlsElement = this.controlsRef?.nativeElement;
         this._toggleControlVisibility('hidden');
