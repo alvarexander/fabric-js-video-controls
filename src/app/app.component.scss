@@ -8,22 +8,24 @@
     border: none;
     padding: 5px;
     border-radius: 0;
+    opacity: 1;
     transition: visibility 0.2s, opacity 0.2s ease-in-out;
 
     &[style*='visibility: hidden'] {
         opacity: 0;
     }
 
-    /* Add fade effect */
-    opacity: 1;
+    &__container {
+        position: relative;
+    }
 
-    .number-label {
+    &__number-label {
         color: #ffffff;
         font-family: 'IBM Plex Sans', sans-serif;
         font-size: 9px;
     }
 
-    .loop-option {
+    &__loop-option {
         transform: scale(0.8);
     }
 

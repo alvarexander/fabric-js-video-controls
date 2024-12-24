@@ -1,4 +1,4 @@
-<div style="position: relative;">
+<div class="controls__container">
     <!-- Fabric.js Canvas -->
     <canvas #canvas></canvas>
 
@@ -15,7 +15,7 @@
             </span>
         </button>
         <!-- Current Time -->
-        <span class="number-label">{{ currentTimeLabel }}</span>
+        <span class="controls__number-label">{{ currentTimeLabel }}</span>
 
         <!-- Scrubber -->
         <input
@@ -28,7 +28,7 @@
                 (input)="onScrubberChange()"
         />
         <!-- Total Time -->
-        <span class="number-label" style="margin-right: 10px;"> {{ videoDurationLabel }}</span>
+        <span class="controls__number-label" style="margin-right: 10px;"> {{ videoDurationLabel }}</span>
 
         <!-- Looping Button -->
         <button #loopButton (click)="changeLoopSetting()">
