@@ -94,6 +94,7 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         // Add video object to canvas
         this.canvas.add(this.videoObject);
 
+        // Start playing the video (optional but recommended)
         this.playPauseVideo();
 
         // Set initial control position
@@ -103,9 +104,10 @@ export class AppComponent implements AfterViewInit, OnDestroy {
         this._toggleControlVisibility('visible');
 
         // Update scrubber position during canvas events
-        this.canvas.on('object:moving', this._updateControlsPosition.bind(this));
         this.canvas.on('mouse:up', () => this._toggleControlVisibility('visible'));
-        this.canvas.on('object:scaling', this._updateControlsPosition.bind(this));
+        this.canvas.on('object:moving', () => this._updateControlsPosition());
+        this.canvas.on('object:scaling', () => this._updateControlsPosition());
+        this.canvas.on('object:rotating', () => this._updateControlsPosition());
 
         // Start rendering the video frames
         this.renderVideoFrame();
@@ -176,18 +178,31 @@ export class AppComponent implements AfterViewInit, OnDestroy {
 
     /**
      * Updates the position of the control element, relative to the corresponding fabric video object.
-     * Does not currently account for angle changes
+     * Note: if in any way there are modifications made to the canvas size or zoom for things such as
+     * aspect ratio, or screen size changes you may need to use the canvas bounds in the calculations as well.
      */
     private _updateControlsPosition(): void {
-        // TODO: Come up with calculations that account for angle.
         const videoFabricObj = this.videoObject;
         const controlsElement = this.controlsRef?.nativeElement;
+        // Hide controls while fabric object is being manipulated/moved (optional)
         this._toggleControlVisibility('hidden');
+        // Minimum amount of width the controls require to not overflow or wrap (can change depending on style)
+        const MIN_CONTROL_WIDTH = 340;
+        // Extra space to put the controls visually slightly below the controls
+        const CONTROL_OFFSET = 5;
+        // Get the bounding box of the video fabric object
+        const boundingRect = videoFabricObj.getBoundingRect();
+        // Determine control width: Use the video width or the minimum width
+        const controlWidth = Math.max(boundingRect.width, MIN_CONTROL_WIDTH);
+        // Calculate the top position: place the controls just below the video
+        const controlTop = (boundingRect.top) + (boundingRect.height) + CONTROL_OFFSET;
+        // Calculate the left position: center horizontally with respect to the bounding box
+        const controlLeft = boundingRect.left + ((boundingRect.width / 2) - (controlWidth / 2));
 
         if (controlsElement) {
-            controlsElement.style.width = `${ videoFabricObj.width * videoFabricObj.scaleX - 5 }px`;
-            controlsElement.style.left = `${ videoFabricObj.left }px`;
-            controlsElement.style.top = `${ videoFabricObj.top + videoFabricObj.height * videoFabricObj.scaleY + 5 }px`;
+            controlsElement.style.width = `${ controlWidth }px`;
+            controlsElement.style.left = `${ controlLeft }px`;
+            controlsElement.style.top = `${ controlTop }px`;
         }
     }
 
